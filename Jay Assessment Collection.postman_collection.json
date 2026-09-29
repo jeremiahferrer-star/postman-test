@@ -1,0 +1,222 @@
+{
+  "info": {
+    "_postman_id": "5079a4c7-b0e3-4f45-a164-37d2f36ae48d",
+    "name": "Jay Assessment Collection",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "50611573",
+    "_collection_link": "https://go.postman.co/collection/50611573-5079a4c7-b0e3-4f45-a164-37d2f36ae48d?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "{{base_url}}/token",
+      "event": [
+        {
+          "listen": "test",
+          "script": {
+            "type": "text/javascript",
+            "exec": [
+              "// Test: HTTP 200\npm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\n// Test: Response contains accessToken\npm.test(\"Response contains accessToken\", function () {\n    var jsonData = pm.response.json();\n    pm.expect(jsonData).to.have.property(\"accessToken\");\n    pm.expect(jsonData.accessToken).to.be.a(\"string\").and.to.have.length.above(0);\n});\n\n// Test: tokenType is Bearer\npm.test(\"tokenType is Bearer\", function () {\n    var jsonData = pm.response.json();\n    pm.expect(jsonData.tokenType).to.eql(\"Bearer\");\n});\n\n// Test: expiryDateTime is a valid ISO date string and is in the future\npm.test(\"expiryDateTime is a valid ISO date string and is in the future\", function () {\n    var jsonData = pm.response.json();\n    pm.expect(jsonData).to.have.property(\"expiryDateTime\");\n    var expiry = new Date(jsonData.expiryDateTime);\n    pm.expect(isNaN(expiry.getTime())).to.be.false; // valid date\n    pm.expect(expiry.getTime()).to.be.above(Date.now()); // in the future\n});\n\n// Save access_token to environment\nvar jsonData = pm.response.json();\nif (pm.response.code === 200 && jsonData.accessToken) {\n    pm.environment.set(\"access_token\", jsonData.accessToken);\n    console.log(\"access_token saved to environment\");\n}"
+            ]
+          }
+        }
+      ],
+      "request": {
+        "auth": {
+          "type": "basic",
+          "basic": [
+            {
+              "key": "username",
+              "value": "{{username}}",
+              "type": "string"
+            },
+            {
+              "key": "password",
+              "value": "{{password}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "raw",
+          "raw": "",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/token",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "token"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "{{base_url}}/users",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/users",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "users"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "{{base_url}}/users/{{user_id}}",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{base_url}}/users/{{user_id}}",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "users",
+            "{{user_id}}"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "{{base_url}}/users",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          },
+          {
+            "key": "Authorization",
+            "value": "Bearer {{access_token}}"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\r\n    \"name\": \"{{test_name}}\",\r\n    \"email\": \"{{test_email}}\",\r\n    \"nickName\": \"{{test_nickname}}\"\r\n}",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/users",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "users"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "{{base_url}}/users",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{access_token}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "[\r\n    {\r\n        \"id\": 1,\r\n        \"name\": \"John Doe\",\r\n        \"email\": \"john@example.com\",\r\n        \"nickName\": \"John\"\r\n    }\r\n]",
+          "options": {
+            "raw": {
+              "language": "json"
+            }
+          }
+        },
+        "url": {
+          "raw": "{{base_url}}/users",
+          "host": [
+            "{{base_url}}"
+          ],
+          "path": [
+            "users"
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "{{baseUrl}}/users/1",
+      "request": {
+        "auth": {
+          "type": "bearer",
+          "bearer": [
+            {
+              "key": "token",
+              "value": "{{base_url}}",
+              "type": "string"
+            }
+          ]
+        },
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/users/1",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "users",
+            "1"
+          ]
+        }
+      },
+      "response": []
+    }
+  ]
+}
